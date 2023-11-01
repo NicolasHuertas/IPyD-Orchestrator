@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'crud.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "providersdb",
+        "NAME": "railway",
         "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "PASSWORD": "4dDDAG6FG*eF4b1g1EFg-6EbfD-b3aGG",
+        "HOST": "roundhouse.proxy.rlwy.net",
+        "PORT": "40058",
     }
 }
 
