@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-oze%zry@)r5&*k#!*4qwz*mdi37m2!9kvcv58=mpvw9gr6tto*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "bemanager-providers:8420",
+    "bemanager-providers"
+]
 
 
 # Application definition
