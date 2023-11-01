@@ -5,6 +5,7 @@ from providers import views
 
 router = routers.DefaultRouter()
 router.register(r'providers', views.ProviderView, 'providers')
+router.register(r'articles', views.ArticleView, 'articles')
 
 urlpatterns = [
     path('api/', include(router.urls)),
