@@ -26,6 +26,9 @@ SECRET_KEY = 'django-insecure-oze%zry@)r5&*k#!*4qwz*mdi37m2!9kvcv58=mpvw9gr6tto*
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",
+    "127.0.0.1",
     "bemanager-providers:8420",
     "bemanager-providers"
 ]
