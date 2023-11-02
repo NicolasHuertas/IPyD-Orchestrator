@@ -25,7 +25,13 @@ SECRET_KEY = 'django-insecure-oze%zry@)r5&*k#!*4qwz*mdi37m2!9kvcv58=mpvw9gr6tto*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",
+    "127.0.0.1",
+    "bemanager-providers:8420",
+    "bemanager-providers"
+]
 
 
 # Application definition
@@ -136,4 +142,7 @@ CORS_ALLOWED_ORIGINS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
 }
