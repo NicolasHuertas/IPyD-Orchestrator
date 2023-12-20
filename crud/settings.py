@@ -26,11 +26,8 @@ SECRET_KEY = 'django-insecure-oze%zry@)r5&*k#!*4qwz*mdi37m2!9kvcv58=mpvw9gr6tto*
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "0.0.0.0",
-    "127.0.0.1",
-    "bemanager-providers:8420",
-    "bemanager-providers"
+    '*',
+    'web',
 ]
 
 
@@ -42,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django_prometheus',
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
@@ -49,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
@@ -57,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'crud.urls'
@@ -92,6 +92,22 @@ DATABASES = {
         "HOST": "roundhouse.proxy.rlwy.net",
         "PORT": "40058",
     }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'loki': {
+            'class': 'django_loki.LokiHttpHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['loki'],
+            'level': 'INFO',
+        },
+    },
 }
 
 

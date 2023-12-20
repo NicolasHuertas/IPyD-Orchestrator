@@ -5,6 +5,8 @@ WORKDIR /Providers_API
 COPY requirements.txt ./
 
 RUN pip install -r requirements.txt
+RUN pip install prometheus_client django-prometheus
+RUN pip install django-loki
 
 COPY . .
 
