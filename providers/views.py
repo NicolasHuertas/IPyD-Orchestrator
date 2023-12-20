@@ -8,14 +8,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-my_counter = Counter('my_counter', 'This is a counter')
+my_counter = Counter('provider_trafic', 'Number of request received in the Provider API', ['method', 'endpoint'])
 
 class ProviderView(viewsets.ModelViewSet):
     serializer_class = ProviderSerializer
     queryset = Provider.objects.all()
 
     def list(self, request, *args, **kwargs):
-        my_counter.inc()  # Increment the counter
+        my_counter.labels(method='GET', endpoint='/providers/').inc()  # Increment the counter with labels
         logger.info('Listing providers')  # Log message
         return super().list(request, *args, **kwargs)
 
@@ -24,7 +24,7 @@ class ArticleView(viewsets.ModelViewSet):
     queryset = Article.objects.all()
 
     def list(self, request, *args, **kwargs):
-        my_counter.inc()  # Increment the counter
+        my_counter.labels(method='GET', endpoint='/articles/').inc()  # Increment the counter with labels
         logger.info('Listing articles')  # Log message
         return super().list(request, *args, **kwargs)
 
