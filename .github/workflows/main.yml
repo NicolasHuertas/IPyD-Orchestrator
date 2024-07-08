@@ -30,4 +30,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            nhuertasuv/bm-providers-api:latest
+            nhuertasuv/ipyd-combined-reservations:latest
