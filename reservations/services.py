@@ -2,7 +2,6 @@ import requests
 from django.db import transaction
 from .models import Reservation
 
-# Assuming these are the base URLs for your microservices
 FLIGHT_SERVICE_URL = 'http://flight-service/api/reservations/' # Placeholders for the actual URLs
 HOTEL_SERVICE_URL = 'http://hotel-service/api/reservations/'
 

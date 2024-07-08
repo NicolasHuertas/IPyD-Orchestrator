@@ -9,21 +9,4 @@ services:
       - .:/app
     ports:
       - "8420:8420"
-    environment:
-      - DJANGO_LOKI_URL=http://loki:3100/loki/api/v1/push
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - "9090:9090"
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
-  loki:
-    image: grafana/loki
-    ports:
-      - "3100:3100"
+    
