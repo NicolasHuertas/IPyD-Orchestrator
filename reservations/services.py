@@ -2,8 +2,8 @@ import requests
 from django.db import transaction
 from .models import Reservation
 
-FLIGHT_SERVICE_URL = 'http://flight-service/api/reservations/' # Placeholders for the actual URLs
-HOTEL_SERVICE_URL = 'http://hotel-service/api/reservations/'
+FLIGHT_SERVICE_URL = 'http://flight-service/api/reservations/'  # Unchanged
+HOTEL_SERVICE_URL = 'http://localhost:8005/hotels/'  # Updated URL
 
 def create_combined_reservation(reservation_date, flight_data, hotel_data):
     with transaction.atomic():
@@ -16,9 +16,9 @@ def create_combined_reservation(reservation_date, flight_data, hotel_data):
             return None
 
         # Attempt to create hotel reservation
-        hotel_response = requests.post(f"{HOTEL_SERVICE_URL}create/", json=hotel_data)
+        hotel_response = requests.post(HOTEL_SERVICE_URL, json=hotel_data)  # Simplified URL
         if hotel_response.status_code == 200:
-            hotel_reservation_id = hotel_response.json()['reservation_id']
+            hotel_reservation_id = hotel_response.json()['id']
         else:
             # If hotel reservation fails, cancel the flight reservation
             requests.post(f"{FLIGHT_SERVICE_URL}cancel/", json={'reservation_id': flight_reservation_id})
@@ -47,7 +47,7 @@ def cancel_combined_reservation(reservation_id):
         return False
 
     # Cancel hotel reservation
-    hotel_cancel_response = requests.post(f"{HOTEL_SERVICE_URL}cancel/", json={'reservation_id': reservation.hotel_reservation_id})
+    hotel_cancel_response = requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'cancelled'})
     if hotel_cancel_response.status_code != 200:
         # If hotel cancellation fails, consider rebooking the flight or handling it accordingly
         return False
