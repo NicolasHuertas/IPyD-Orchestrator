@@ -2,7 +2,7 @@ import requests
 from django.db import transaction
 from .models import Reservation
 
-FLIGHT_SERVICE_URL = 'http://flight-service/api/reservations/' # Placeholders for the actual URLs
+FLIGHT_SERVICE_URL = 'http://flight-service/api/reservations/' # Placeholders for the actual  URLs
 HOTEL_SERVICE_URL = 'http://hotel-service/api/reservations/'
 
 def create_combined_reservation(reservation_date, flight_data, hotel_data):
