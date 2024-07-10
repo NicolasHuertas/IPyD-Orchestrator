@@ -5,7 +5,7 @@ from .models import Reservation
 FLIGHT_SERVICE_URL = 'http://localhost:8005/seats/' 
 HOTEL_SERVICE_URL = 'http://localhost:8005/hotels/'  
 
-def create_combined_reservation(reservation_date, flight_data, hotel_data):
+def create_combined_reservation(flight_data, hotel_data):
     with transaction.atomic():
         # Attempt to create flight reservation
         flight_response = requests.post(FLIGHT_SERVICE_URL, json=flight_data)
