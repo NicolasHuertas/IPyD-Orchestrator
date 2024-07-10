@@ -41,9 +41,6 @@ def cancel_combined_reservation(reservation_id):
     except Reservation.DoesNotExist:
         return False
 
-    flight_cancelled = False
-    hotel_cancelled = False
-
     # Attempt to cancel flight reservation
     flight_cancel_response = requests.put(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/", json={'status': 'cancelled'})
     flight_cancelled = flight_cancel_response.status_code == 200
