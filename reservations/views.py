@@ -7,7 +7,7 @@ from .services import create_combined_reservation, cancel_combined_reservation
 @api_view(['POST'])
 def create_reservation(request):
     """
-    Create a combined flight and hotel reservation.
+    Create a combined flight and hotel reservation. 
     """
     reservation_date = request.data.get('reservation_date')
     flight_data = request.data.get('flight_data')
