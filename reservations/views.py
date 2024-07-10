@@ -9,14 +9,13 @@ def create_reservation(request):
     """
     Create a combined flight and hotel reservation. 
     """
-    reservation_date = request.data.get('reservation_date')
     flight_data = request.data.get('flight_data')
     hotel_data = request.data.get('hotel_data')
 
-    if not (reservation_date and flight_data and hotel_data):
+    if not (flight_data and hotel_data):
         return Response({'error': 'Missing data for reservation'}, status=status.HTTP_400_BAD_REQUEST)
 
-    reservation = create_combined_reservation(reservation_date, flight_data, hotel_data)
+    reservation = create_combined_reservation(flight_data, hotel_data)
     if reservation:
         return Response({'message': 'Reservation created successfully', 'reservation_id': reservation.id}, status=status.HTTP_201_CREATED)
     else:

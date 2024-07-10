@@ -17,7 +17,7 @@ def create_combined_reservation(reservation_date, flight_data, hotel_data):
             return None
 
         # Attempt to create hotel reservation
-        hotel_response = requests.post(HOTEL_SERVICE_URL, json=hotel_data)  # Simplified URL
+        hotel_response = requests.post(HOTEL_SERVICE_URL, json=hotel_data)
         if hotel_response.status_code == 200:
             hotel_reservation_id = hotel_response.json()['id']
         else:
@@ -27,10 +27,8 @@ def create_combined_reservation(reservation_date, flight_data, hotel_data):
 
         # If both reservations are successful, save the combined reservation
         reservation = Reservation(
-            reservation_date=reservation_date,
             hotel_reservation_id=hotel_reservation_id,
-            flight_reservation_id=flight_reservation_id,
-            status='active'
+            flight_reservation_id=flight_reservation_id
         )
         reservation.save()
         return reservation
@@ -41,10 +39,9 @@ def cancel_combined_reservation(reservation_id):
     except Reservation.DoesNotExist:
         return False
 
-    # Attempt to cancel flight reservation
-    flight_cancel_response = requests.put(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/", json={'status': 'cancelled'})
+    # Attempt to cancel flight reservation using POST request
+    flight_cancel_response = requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel")
     flight_cancelled = flight_cancel_response.status_code == 200
-
 
     # Attempt to cancel hotel reservation
     hotel_cancel_response = requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'cancelled'})
@@ -62,7 +59,7 @@ def cancel_combined_reservation(reservation_id):
 
     if flight_cancelled and hotel_cancelled:
         # If both cancellations are successful, update the reservation status to 'cancelled'
-        reservation.status = 'cancelled'
+        reservation.cancelled = True
         reservation.save()
         return True
     else:
