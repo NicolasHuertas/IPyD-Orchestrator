@@ -8,9 +8,9 @@ HOTEL_SERVICE_URL = 'http://localhost:8005/hotels/'
 def create_combined_reservation(reservation_date, flight_data, hotel_data):
     with transaction.atomic():
         # Attempt to create flight reservation
-        flight_response = requests.post(f"{FLIGHT_SERVICE_URL}create/", json=flight_data)
+        flight_response = requests.post(FLIGHT_SERVICE_URL, json=flight_data)
         if flight_response.status_code == 200:
-            flight_reservation_id = flight_response.json()['reservation_id']
+            flight_reservation_id = flight_response.json()['id']
         else:
             # Delete hotel reservation if flight reservation fails
             requests.delete(f"{HOTEL_SERVICE_URL}{hotel_data['id']}/")
@@ -21,8 +21,8 @@ def create_combined_reservation(reservation_date, flight_data, hotel_data):
         if hotel_response.status_code == 200:
             hotel_reservation_id = hotel_response.json()['id']
         else:
-            # If hotel reservation fails, cancel the flight reservation
-            requests.post(f"{FLIGHT_SERVICE_URL}cancel/", json={'reservation_id': flight_reservation_id})
+            # Delete flight reservation if hotel reservation fails
+            requests.delete(f"{FLIGHT_SERVICE_URL}{flight_data['id']}/")
             return None
 
         # If both reservations are successful, save the combined reservation
@@ -41,20 +41,32 @@ def cancel_combined_reservation(reservation_id):
     except Reservation.DoesNotExist:
         return False
 
-    # Cancel flight reservation
-    flight_cancel_response = requests.post(f"{FLIGHT_SERVICE_URL}cancel/", json={'reservation_id': reservation.flight_reservation_id})
-    if flight_cancel_response.status_code == 200:
-        # Cancel hotel reservation if flight cancellation is successful
-        hotel_cancel_response = requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'cancelled'})
-        return False
+    flight_cancelled = False
+    hotel_cancelled = False
 
-    # Cancel hotel reservation
+    # Attempt to cancel flight reservation
+    flight_cancel_response = requests.put(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/", json={'status': 'cancelled'})
+    flight_cancelled = flight_cancel_response.status_code == 200
+
+
+    # Attempt to cancel hotel reservation
     hotel_cancel_response = requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'cancelled'})
-    if hotel_cancel_response.status_code == 200:
-        # Cancel flight reservation if hotel cancellation is successful
+    hotel_cancelled = hotel_cancel_response.status_code == 200
+
+    # Check if either cancellation failed
+    if flight_cancelled and not hotel_cancelled:
+        # Set flight reservation back to active
+        requests.put(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/", json={'status': 'active'})
+        return False
+    elif hotel_cancelled and not flight_cancelled:
+        # Set hotel reservation back to active
+        requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'active'})
         return False
 
-    # Update reservation status
-    reservation.status = 'cancelled'
-    reservation.save()
-    return True
+    if flight_cancelled and hotel_cancelled:
+        # If both cancellations are successful, update the reservation status to 'cancelled'
+        reservation.status = 'cancelled'
+        reservation.save()
+        return True
+    else:
+        return False

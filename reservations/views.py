@@ -23,7 +23,7 @@ def create_reservation(request):
         return Response({'error': 'Failed to create reservation'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
-def delete_reservation(request):
+def cancel_reservation(request):
     """
     Cancel a combined flight and hotel reservation.
     """
