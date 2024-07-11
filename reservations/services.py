@@ -3,7 +3,7 @@ from django.db import transaction
 from .models import Reservation
 import logging
 
-FLIGHT_SERVICE_URL = 'http://flight-reservations:8000/api/flights/seats/'
+FLIGHT_SERVICE_URL = 'http://flight-reservations:8000/api/reservations/'
 HOTEL_SERVICE_URL = 'http://hotel-reservations:3000/api/reservations/'
 
 def create_combined_reservation(flight_data, hotel_data):
