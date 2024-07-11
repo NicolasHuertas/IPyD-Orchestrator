@@ -43,15 +43,15 @@ def cancel_combined_reservation(reservation_id):
         flight_cancel_response = requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel/")
         hotel_cancel_response = requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'cancelled'})
 
-        if flight_cancel_response.status_code == 201 and hotel_cancel_response.status_code == 200:
+        if flight_cancel_response.status_code == 200 and hotel_cancel_response.status_code == 200:
             reservation.cancelled = True
             reservation.save()
             return True
         else:
-            if flight_cancel_response.status_code == 201:
+            if flight_cancel_response.status_code == 200:
                 # Attempt to revert hotel cancellation if flight was cancelled successfully
                 requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'active'})
-            if hotel_cancel_response.status_code == 200:
+            elif hotel_cancel_response.status_code == 200:
                 # Attempt to revert flight cancellation if hotel was cancelled successfully
                 requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel/")
             return False
