@@ -1,8 +1,14 @@
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .services import create_combined_reservation, cancel_combined_reservation
+from .models import Reservation 
+from .serializers import ReservationSerializer  
+
+class ReservationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
 
 @api_view(['POST'])
 def create_reservation(request):
