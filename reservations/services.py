@@ -40,20 +40,20 @@ def cancel_combined_reservation(reservation_id):
         return False
 
     try:
-        flight_cancel_response = requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel", headers=headers)
+        flight_cancel_response = requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel/", headers=headers)
         hotel_cancel_response = requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'cancelled'}, headers=headers)
 
-        if flight_cancel_response.status_code == 200 and hotel_cancel_response.status_code == 200:
+        if flight_cancel_response.status_code == 201 and hotel_cancel_response.status_code == 200:
             reservation.cancelled = True
             reservation.save()
             return True
         else:
-            if flight_cancel_response.status_code == 200:
+            if flight_cancel_response.status_code == 201:
                 # Attempt to revert hotel cancellation if flight was cancelled successfully
                 requests.put(f"{HOTEL_SERVICE_URL}{reservation.hotel_reservation_id}/", json={'status': 'active'}, headers=headers)
             if hotel_cancel_response.status_code == 200:
                 # Attempt to revert flight cancellation if hotel was cancelled successfully
-                requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel", json={'status': 'active'}, headers=headers)
+                requests.post(f"{FLIGHT_SERVICE_URL}{reservation.flight_reservation_id}/cancel", headers=headers)
             return False
     except requests.exceptions.RequestException as e:
         logging.error(f"Network or request error occurred: {e}")
