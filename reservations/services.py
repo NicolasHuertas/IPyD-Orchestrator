@@ -12,7 +12,7 @@ def create_combined_reservation(flight_data, hotel_data):
         try:
             flight_response = requests.post(FLIGHT_SERVICE_URL, json=flight_data, headers=headers)
             if flight_response.status_code != 201:
-                return None
+                return {"error": f"Failed to create flight reservation. Status Code: {flight_response.status_code}"}
             flight_reservation_id = flight_response.json()['id']
             print(flight_reservation_id)
 
@@ -22,11 +22,11 @@ def create_combined_reservation(flight_data, hotel_data):
                 delete_response = requests.delete(f"{FLIGHT_SERVICE_URL}{flight_reservation_id}/", headers=headers)
                 if delete_response.status_code != 204:
                     logging.error(f"Failed to delete flight reservation ID: {flight_reservation_id}. Status Code: {delete_response.status_code}")
-                return None
+                return {"error": f"Failed to create hotel reservation. Status Code: {hotel_response.status_code}"}
             hotel_reservation_id = hotel_response.json()['id']
         except requests.exceptions.RequestException as e:
             logging.error(f"Network or request error occurred: {e}")
-            return None
+            return {"error": f"Network or request error occurred: {e}"}
 
         reservation = Reservation(hotel_reservation_id=hotel_reservation_id, flight_reservation_id=flight_reservation_id)
         reservation.save()
