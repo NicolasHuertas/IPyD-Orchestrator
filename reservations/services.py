@@ -1,7 +1,7 @@
 import requests
-from django.db import transaction
-from .models import Reservation
 import logging
+from reservations.models import Reservation
+from django.db import transaction
 
 FLIGHT_SERVICE_URL = 'http://flight-reservations:8000/api/reservations/'
 HOTEL_SERVICE_URL = 'http://hotel-reservations:3000/api/reservations/'
@@ -17,8 +17,10 @@ def create_combined_reservation(flight_data, hotel_data):
 
             hotel_response = requests.post(HOTEL_SERVICE_URL, json=hotel_data, headers=headers)
             if hotel_response.status_code != 200:
-                # Attempt to delete flight reservation if hotel reservation fails
-                requests.delete(f"{FLIGHT_SERVICE_URL}{flight_reservation_id}/", headers=headers)
+                logging.info(f"Attempting to delete flight reservation ID: {flight_reservation_id}")
+                delete_response = requests.delete(f"{FLIGHT_SERVICE_URL}{flight_reservation_id}/", headers=headers)
+                if delete_response.status_code != 200:
+                    logging.error(f"Failed to delete flight reservation ID: {flight_reservation_id}. Status Code: {delete_response.status_code}")
                 return None
             hotel_reservation_id = hotel_response.json()['id']
         except requests.exceptions.RequestException as e:

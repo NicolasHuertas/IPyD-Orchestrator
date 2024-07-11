@@ -14,12 +14,12 @@ def create_reservation(request):
 
     if not (flight_data and hotel_data):
         return Response({'error': 'Missing data for reservation'}, status=status.HTTP_400_BAD_REQUEST)
-
-    reservation = create_combined_reservation(flight_data, hotel_data)
-    if reservation:
-        return Response({'message': 'Reservation created successfully', 'reservation_id': reservation.id}, status=status.HTTP_201_CREATED)
     else:
-        return Response({'error': 'Failed to create reservation'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        reservation = create_combined_reservation(flight_data, hotel_data)
+        if reservation:
+            return Response({'message': 'Reservation created successfully', 'reservation_id': reservation.id}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'error': 'Failed to create reservation'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def cancel_reservation(request):
