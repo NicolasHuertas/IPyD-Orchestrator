@@ -3,8 +3,8 @@ from django.db import transaction
 from .models import Reservation
 import logging
 
-FLIGHT_SERVICE_URL = 'http://127.0.0.1:8005/seats/' 
-HOTEL_SERVICE_URL = 'http://127.0.0.1:8005/hotels/'  
+FLIGHT_SERVICE_URL = 'http://flight-reservations:8000/api/flights/seats/'
+HOTEL_SERVICE_URL = 'http://hotel-reservations:3000/api/reservations/'
 
 def create_combined_reservation(flight_data, hotel_data):
     headers = {'Content-Type': 'application/json'}
