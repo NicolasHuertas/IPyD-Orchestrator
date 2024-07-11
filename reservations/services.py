@@ -11,16 +11,16 @@ def create_combined_reservation(flight_data, hotel_data):
     with transaction.atomic():
         try:
             flight_response = requests.post(FLIGHT_SERVICE_URL, json=flight_data, headers=headers)
-            if flight_response.status_code != 200:
+            if flight_response.status_code != 201:
                 return None
             flight_reservation_id = flight_response.json()['id']
             print(flight_reservation_id)
 
             hotel_response = requests.post(HOTEL_SERVICE_URL, json=hotel_data, headers=headers)
-            if hotel_response.status_code != 200:
+            if hotel_response.status_code != 201:
                 logging.info(f"Attempting to delete flight reservation ID: {flight_reservation_id}")
                 delete_response = requests.delete(f"{FLIGHT_SERVICE_URL}{flight_reservation_id}/", headers=headers)
-                if delete_response.status_code != 200:
+                if delete_response.status_code != 204:
                     logging.error(f"Failed to delete flight reservation ID: {flight_reservation_id}. Status Code: {delete_response.status_code}")
                 return None
             hotel_reservation_id = hotel_response.json()['id']
