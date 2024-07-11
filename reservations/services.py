@@ -14,6 +14,7 @@ def create_combined_reservation(flight_data, hotel_data):
             if flight_response.status_code != 200:
                 return None
             flight_reservation_id = flight_response.json()['id']
+            print(flight_reservation_id)
 
             hotel_response = requests.post(HOTEL_SERVICE_URL, json=hotel_data, headers=headers)
             if hotel_response.status_code != 200:
