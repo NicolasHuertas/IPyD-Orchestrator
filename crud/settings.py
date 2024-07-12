@@ -136,9 +136,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    '*'
-]
+# Remove or comment out the CORS_ALLOWED_ORIGINS setting
+# CORS_ALLOWED_ORIGINS = [
+#     '*'
+# ]
+
+# Add this setting to allow all origins
+CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
